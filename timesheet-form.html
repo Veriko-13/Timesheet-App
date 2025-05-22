@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Timesheet Form</title>
+    <style>
+        table, th, td {
+            border: 1px solid gray;
+            border-collapse: collapse;
+            padding: 8px;
+        }
+        input, select {
+            width: 100%;
+        }
+    </style>
+    <link rel="stylesheet" href="css/Style.css">
+
+</head>
+<body>
+<h1>Timesheet Form</h1>
+
+<!-- Back button -->
+<button type="button" onclick="window.location.href='index.html'">Back to Home page</button>
+
+
+<form id="timesheet-form">
+    <label for="user-name">სახელი:</label><br>
+    <input type="text" id="user-name" name="user-name" required><br><br>
+
+    <table id="timesheet-table">
+        <thead>
+            <tr>
+                <th>Project</th>
+                <th>Date</th>
+                <th>Hours</th>
+                <th>Remove</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>
+                    <select name="project[]" required>
+                        <option value="">-- აირჩიე პროექტი --</option>
+                        <option value="Project A">Project A</option>
+                        <option value="Project B">Project B</option>
+                        <option value="Project C">Project C</option>
+                    </select>
+                </td>
+                <td><input type="date" name="date[]" required></td>
+                <td><input type="number" name="hours[]" step="0.1" required></td>
+                <td><button type="button" onclick="removeRow(this)">წაშლა</button></td>
+            </tr>
+        </tbody>
+    </table>
+    <br>
+        <button type="button" onclick="addRow()">პროექტის დამატება</button><br><br>
+
+    <input type="submit" value="გაგზავნა">
+</form>
+<script>
+document.getElementById('timesheet-form').addEventListener('submit', function (e) {
+    e.preventDefault();
+
+    const name = document.getElementById('user-name').value;
+    const rows = document.querySelectorAll('#timesheet-table tbody tr');
+    
+    const entries = Array.from(rows).map(row => {
+        return {
+            project: row.querySelector('select').value,
+            date: row.querySelector('input[type="date"]').value,
+            hours: row.querySelector('input[type="number"]').value
+        };
+    });
+    // Check for any empty entries before submitting
+    if (entries.some(entry => !entry.project || !entry.date || !entry.hours)) {
+        alert("გთხოვ შეავსე ყველა ველი ყველა რიგში.");
+        return;
+    }
+
+    const entry = {
+        name: name,
+        entries: entries
+    };
+     fetch("https://prod-56.westeurope.logic.azure.com:443/workflows/26ef2f779d77464fb4c8ed1b3a126509/triggers/manual/paths/invoke?api-version=2016-06-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=fo6Tzx--8UaJRxJo6hR-TNCQqUBnc3q9ISQ0iBHyUpY", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(entry)
+    })
+    .then(response => {
+        if (response.ok) {
+            alert("მონაცემები წარმატებით გაიგზავნა!");
+            localStorage.removeItem('draftTimesheet'); // Clear draft after successful submit
+            location.reload();
+        } else {
+            alert("შეცდომა გაგზავნისას.");
+        }
+    })
+     .catch(error => {
+        console.error("Error:", error);
+        alert("დაკავშირების შეცდომა.");
+    });
+});
+
+</script>
+
+<script>
+
+    function addRow() {
+        const tbody = document.querySelector('#timesheet-table tbody');
+        if (!tbody) {
+            console.error("ტაბულის <tbody> არ მოიძებნა! დარწმუნდი რომ 'id=\"timesheet-table\"' სწორად გაქვს.");
+            return;
+        }
+
+        const newRow = document.createElement('tr');
+        newRow.innerHTML = `
+            <td>
+            <select name="project[]" required>
+                    <option value="">-- აირჩიე პროექტი --</option>
+                    <option value="Project A">Project A</option>
+                    <option value="Project B">Project B</option>
+                    <option value="Project C">Project C</option>
+                </select>
+            </td>
+            <td><input type="date" name="date[]" required></td>
+            <td><input type="number" name="hours[]" step="0.1" required></td>
+            <td><button type="button" class="delete" onclick="removeRow(this)">წაშლა</button></td>
+        `;
+ tbody.appendChild(newRow);
+    }
+
+    function removeRow(button) {
+        button.closest('tr').remove();
+    }
+
+
+     // Save to localStorage as draft
+    function saveDraft() {
+        const name = document.getElementById('user-name').value;
+        const rows = document.querySelectorAll('#timesheet-table tbody tr');
+        const timesheetData = Array.from(rows).map(row => {
+            return {
+                project: row.querySelector('select').value,
+                date: row.querySelector('input[type="date"]').value,
+                hours: row.querySelector('input[type="number"]').value
+            };
+        });
+const draft = {
+            name: name,
+            entries: timesheetData
+        };
+
+        localStorage.setItem('draftTimesheet', JSON.stringify(draft));
+        alert("მონახაზი შენახულია!");
+    }
+    // Load from localStorage
+    function loadDraft() {
+        const draft = JSON.parse(localStorage.getItem('draftTimesheet'));
+        if (!draft) {
+            alert("მონახაზი არ მოიძებნა.");
+            return;
+        }
+
+        document.getElementById('user-name').value = draft.name;
+
+        const tbody = document.querySelector('#timesheet-table tbody');
+        tbody.innerHTML = ''; // Clear old rows
+
+        draft.entries.forEach(entry => {
+            const newRow = document.createElement('tr');
+            newRow.innerHTML = `
+    <td>
+                    <select name="project[]" required>
+                        <option value="">-- აირჩიე პროექტი --</option>
+                        <option value="Project A">Project A</option>
+                        <option value="Project B">Project B</option>
+                        <option value="Project C">Project C</option>
+                    </select>
+                </td>
+<td><input type="date" name="date[]" required></td>
+                <td><input type="number" name="hours[]" step="0.1" required></td>
+                <td><button type="button" onclick="removeRow(this)">წაშლა</button></td>
+            `;
+            tbody.appendChild(newRow);
+
+            const select = newRow.querySelector('select');
+            const dateInput = newRow.querySelector('input[type="date"]');
+            const hoursInput = newRow.querySelector('input[type="number"]');
+
+            select.value = entry.project;
+            dateInput.value = entry.date;
+            hoursInput.value = entry.hours;
+        });
+
+        alert("მონახაზი ჩატვირთულია!");
+    }
+
+</script>
+
+<!-- Draft Buttons -->
+<button type="button" onclick="saveDraft()">Save as a draft</button>
+<button type="button" onclick="loadDraft()">Draft Hours</button>
+
+<body class="form-page">
+
+<!-- Button to open form page -->
+    <button onclick="location.href='budgetedhours.html'">Budgeted Hours</button>
+    <body class="timesheet-form">
+
+
+
+</body>
+</html>

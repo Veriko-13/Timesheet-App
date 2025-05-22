@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Budgeted Hours Report</title>
+    <link rel="stylesheet" href="css/Style.css">
+</head>
+<body class="form-page">  <!-- You can use the form-page class here as well -->
+    <h1>Saved Budgeted Hours Report</h1>
+
+    <!-- Table to display saved data -->
+    <table id="saved-hours-table">
+        <thead>
+            <tr>
+                <th>Project</th>
+                <th>Date</th>
+                <th>Actual Hours</th>
+                <th>Budgeted Hours</th>
+                <th>Status (Over/Under)</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Data rows will be inserted here via JavaScript -->
+        </tbody>
+    </table>
+
+    <script>
+        // Load saved timesheet data from localStorage
+        window.onload = function() {
+            const savedData = JSON.parse(localStorage.getItem('timesheetData')) || [];
+
+            const tableBody = document.querySelector('#saved-hours-table tbody');
+            tableBody.innerHTML = ''; // Clear any existing rows
+
+            // Loop through saved data and create table rows
+            savedData.forEach(entry => {
+                const row = document.createElement('tr');
+
+                // Calculate whether the user is over or under the budget
+                const status = entry.hours > entry.budgetedHours ? 'Over Budget' : 'Under Budget';
+
+                row.innerHTML = `
+                    <td>${entry.project}</td>
+                    <td>${entry.date}</td>
+                    <td>${entry.hours}</td>
+                    <td>${entry.budgetedHours}</td>
+                    <td>${status}</td>
+                `;
+
+                tableBody.appendChild(row);
+            });
+
+            if (savedData.length === 0) {
+                const row = document.createElement('tr');
+                row.innerHTML = `<td colspan="5">No data available.</td>`;
+                tableBody.appendChild(row);
+            }
+        };
+    </script>
+
+    <br>
+    <button onclick="window.location.href='index.html'">Back to Timesheet</button>
+</body>
+</html>
