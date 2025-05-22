@@ -1,0 +1,156 @@
+/* ======= General Styles ======= */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(to right, #e0f7fa, #e1bee7);
+    margin: 0;
+    padding: 40px;
+    color: #333;
+    text-align: center;
+}
+
+/* ======= Hero Card Section ======= */
+.hero-card {
+    background-color: white;
+    border-radius: 16px;
+    padding: 40px;
+    max-width: 900px;
+    margin: 40px auto;
+    box-shadow: 0 12px 24px rgba(0,0,0,0.1);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+h1 {
+    color: #2c3e50;
+    margin-bottom: 10px;
+    font-size: 2.8rem;
+    font-weight: 700;
+}
+
+p {
+    font-size: 1.25rem;
+    color: #666;
+    margin-bottom: 30px;
+}
+
+/* ======= Shared Button Styles ======= */
+button,
+input[type="submit"] {
+    background: linear-gradient(135deg, #6366f1, #3b82f6);
+    color: white;
+    border: none;
+    padding: 12px 28px;
+    font-size: 1em;
+    border-radius: 10px;
+    cursor: pointer;
+    margin: 10px 5px;
+    transition: all 0.3s ease-in-out;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+}
+
+button:hover,
+input[type="submit"]:hover {
+    transform: scale(1.05);
+    background: linear-gradient(135deg, #4f46e5, #2563eb);
+}
+
+button[type="button"].delete {
+    background-color: #e74c3c;
+}
+
+button[type="button"].delete:hover {
+    background-color: #c0392b;
+}
+
+/* ======= Index Page Specific ======= */
+body.index-page img {
+    width: 100%;
+    max-width: 700px;
+    height: auto;
+    margin-top: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* ======= Form Page Specific ======= */
+body.form-page form {
+    background-color: white;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    text-align: left;
+}
+
+label {
+    font-weight: 600;
+    display: block;
+    margin-bottom: 5px;
+}
+
+input[type="text"],
+input[type="date"],
+input[type="number"],
+select {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 1em;
+}
+
+/* ======= Table Styling ======= */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+th, td {
+    border: 1px solid #ccc;
+    padding: 12px;
+    text-align: center;
+}
+
+th {
+    background-color: #ecf0f1;
+}
+
+table td select,
+table td input[type="text"],
+table td input[type="date"],
+table td input[type="number"],
+table td button {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 8px;
+    font-size: 1em;
+    margin: 0;
+}
+
+/* ======= Responsive Design ======= */
+@media (max-width: 768px) {
+    body {
+        padding: 20px;
+    }
+
+    .hero-card {
+        padding: 20px;
+    }
+
+    h1 {
+        font-size: 2rem;
+    }
+
+    p {
+        font-size: 1rem;
+    }
+
+    button,
+    input[type="submit"] {
+        width: 100%;
+    }
+}
